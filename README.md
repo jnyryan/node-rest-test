@@ -11,6 +11,7 @@ npm start
 
 Browse to http://localhost:3000
 
+![Screenshot](public/img/screenshot.png)
 #References
 
 http://jsfiddle.net/mqyCb/59/
