@@ -7,12 +7,12 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var loadTests = require('./lib/load-tests');
 
 var app = express()
     ,http = require('http')
     ,server = http.createServer(app)
-    ,io = require('socket.io').listen(server);
+    ,io = require('socket.io').listen(server)
+    ,testLoader = require('./lib/test-loader')(io);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -58,19 +58,6 @@ app.use(function(err, req, res, next) {
         message: err.message,
         error: {}
     });
-});
-
-io.on('connection',function(socket){
-  console.log('connection established ...')
-  socket.emit('news', { hello: 'world' });
-  socket.on('newsResponse', function (data) {
-    console.log(data);
-  });
-  socket.on('BeginTestProcess', function (config) {
-    console.log('BeginTestProcess');
-    console.dir(config);
-    loadTests.runTests(socket, config);
-  });
 });
 
 server.listen(3000);

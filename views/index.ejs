@@ -27,28 +27,9 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-  <script src="../vendor/socket.io-1.1.0.js"></script>
-
-  <script>
-    var socket = io.connect();
-
-    socket.on('TestStarted', function (data) {
-      console.log(data);
-      var elementId = "testResult" + data.testNumber;
-      $('#results').append($('<span id="' + elementId + '" style="float:left;color: #4F9CEF; font-size: 20px;">&#x2B22;</span>'));
-
-    });
-
-    socket.on('TestFinished', function (data) {
-      console.log(data);
-      $('#testResult' + data.testNumber).css("color","#6C6");
-    });
-
-  </script>
-
 </head>
 
-<body >
+<body>
 
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
@@ -92,7 +73,7 @@
           <div class="form-group">
             <label for="status" class="col-sm-3 control-label">Transport</label>
             <div class="col-sm-9">
-              <select class="form-control" id="method" name="method">
+              <select class="form-control" id="method" name="method" ng-model="data.test_options.transport">
                 <option>HTTP</option>
                 <option>HTTPS</option>
               </select>
@@ -101,31 +82,31 @@
           <div class="form-group">
             <label for="concept" class="col-sm-3 control-label">Hostname</label>
             <div class="col-sm-9">
-              <input type="text" class="form-control" id="hostname" name="hostname" PlaceHolder="127.0.0.1">
+              <input type="text" class="form-control" id="hostname" name="hostname" PlaceHolder="127.0.0.1" ng-model="data.connection_options.hostname">
             </div>
           </div>
           <div class="form-group">
             <label for="description" class="col-sm-3 control-label">Port</label>
             <div class="col-sm-9">
-              <input type="number" class="form-control" id="port" name="port" PlaceHolder="80">
+              <input type="number" class="form-control" id="port" name="port" PlaceHolder="80" ng-model="data.connection_options.port">
             </div>
           </div>
           <div class="form-group">
             <label for="amount" class="col-sm-3 control-label">Path</label>
             <div class="col-sm-9">
-              <input type="text" class="form-control" id="path" name="path" PlaceHolder="/">
+              <input type="text" class="form-control" id="path" name="path" PlaceHolder="/" ng-model="data.connection_options.path">
             </div>
           </div>
           <div class="form-group">
             <label for="date" class="col-sm-3 control-label">Authorization</label>
             <div class="col-sm-9">
-              <input type="text" class="form-control" id="authorization" name="authorization" PlaceHolder="username:password">
+              <input type="text" class="form-control" id="authorization" name="authorization" PlaceHolder="username:password" ng-model="data.connection_options.auth">
             </div>
           </div>
           <div class="form-group">
             <label for="status" class="col-sm-3 control-label">Method</label>
             <div class="col-sm-9">
-              <select class="form-control" id="method" name="method">
+              <select class="form-control" id="method" name="method" ng-model="data.connection_options.method">
                 <option>GET</option>
                 <option>POST</option>
               </select>
@@ -141,9 +122,9 @@
         </ul>
 
         <div class="form-group">
-          <label for="description" class="col-sm-3 control-label">Number of Tests to run</label>
+          <label for="description" class="col-sm-3 control-label">Iterations</label>
           <div class="col-sm-9">
-            <input type="number" class="form-control" id="iterations" name="iterations" PlaceHolder="100">
+            <input type="number" class="form-control" id="iterations" name="iterations" PlaceHolder="100" ng-model="data.test_options.iterations">
           </div>
         </div>
 
@@ -157,27 +138,40 @@
       <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <h1 class="page-header">Summary</h1>
 
-        <div class="row placeholders">
-          <div class="col-xs-6 col-sm-3 placeholder">
-            <img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
-            <h4>Label</h4>
-            <span class="text-muted">Something else</span>
+        <div class="row">
+          <div class="col-md-9">
+          <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>Transport</dt><dd>{{summaryData.transport}}</a>&nbsp;</dd>
+                <dt>Host Name</dt><dd>{{summaryData.hostname}}&nbsp;</dd>
+                <dt>Port</dt><dd>{{summaryData.port}}&nbsp;</dd>
+                <dt>Path</dt><dd>{{summaryData.path}}&nbsp;</dd>
+                <dt>Authorization</dt><dd>{{summaryData.auth}}&nbsp;</dd>
+                <dt>Method</dt><dd>{{summaryData.method}}&nbsp;</dd>
+              </dl>
           </div>
-          <div class="col-xs-6 col-sm-3 placeholder">
-            <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
-            <h4>Label</h4>
-            <span class="text-muted">Something else</span>
           </div>
-          <div class="col-xs-6 col-sm-3 placeholder">
-            <img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
-            <h4>Label</h4>
-            <span class="text-muted">Something else</span>
+          <div class="col-md-3">
+            <ul class="list-group">
+              <li class="list-group-item">
+                <span class="badge list-group-item-info">{{testStartedCount}}</span>
+                Tests Started
+              </li>
+              <li class="list-group-item">
+                <span class="badge list-group-item-warning">{{testCompletedCount}}</span>
+                Tests Completed
+              </li>
+              <li class="list-group-item">
+                <span class="badge list-group-item-success">{{testPassedCount}}</span>
+                Tests Passed
+              </li>
+              <li class="list-group-item">
+                <span class="badge list-group-item-danger">{{testFailedCount}}</span>
+                Tests Failed
+              </li>
+            </ul>
           </div>
-          <div class="col-xs-6 col-sm-3 placeholder">
-            <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
-            <h4>Label</h4>
-            <span class="text-muted">Something else</span>
-          </div>
+
         </div>
 
         <h2 class="sub-header">Details</h2>
@@ -199,6 +193,7 @@
   <script src="../vendor/docs.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <script src="../vendor/ie10-viewport-bug-workaround.js"></script>
+  <script src="../vendor/socket.io-1.1.0.js"></script>
   <script src="../js/app.js"></script>
 </body>
 
