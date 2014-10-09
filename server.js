@@ -69,7 +69,7 @@ io.on('connection',function(socket){
   socket.on('BeginTestProcess', function (config) {
     console.log('BeginTestProcess');
     console.dir(config);
-    loadTests.runTests(socket);
+    loadTests.runTests(socket, config);
   });
 });
 
